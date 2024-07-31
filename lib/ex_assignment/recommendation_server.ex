@@ -43,8 +43,11 @@ defmodule ExAssignment.RecommendationServer do
 
   @impl true
   def handle_call(:get_recommended_todo, _from, state) do
-    IO.inspect(state.recommendation, label: "Recommendation")
-    {:reply, state.recommendation, state}
+    case state.recommendation do
+      0 -> {:reply, nil, state}
+      _ ->
+        {:reply, state.recommendation, state}
+      end
   end
 
   @impl true
