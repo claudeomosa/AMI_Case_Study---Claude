@@ -3,11 +3,12 @@ defmodule ExAssignmentWeb.TodoController do
 
   alias ExAssignment.Todos
   alias ExAssignment.Todos.Todo
+  alias ExAssignment.RecommendationServer
 
   def index(conn, _params) do
     open_todos = Todos.list_todos(:open)
     done_todos = Todos.list_todos(:done)
-    recommended_todo = Todos.get_recommended()
+    recommended_todo = RecommendationServer.get_recommended_todo()
 
     render(conn, :index,
       open_todos: open_todos,
