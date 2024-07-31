@@ -69,14 +69,14 @@ defmodule ExAssignmentWeb.TodoController do
   end
 
   def check(conn, %{"id" => id}) do
-    :ok = Todos.check(id)
+    :ok = RecommendationServer.check_and_update_recommendation(id)
 
     conn
     |> redirect(to: ~p"/todos")
   end
 
   def uncheck(conn, %{"id" => id}) do
-    :ok = Todos.uncheck(id)
+    :ok = RecommendationServer.uncheck_and_update_recommendation(id)
 
     conn
     |> redirect(to: ~p"/todos")

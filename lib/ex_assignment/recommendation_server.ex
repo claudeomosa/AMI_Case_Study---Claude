@@ -19,6 +19,20 @@ defmodule ExAssignment.RecommendationServer do
     GenServer.call(__MODULE__, :get_recommended_todo)
   end
 
+  @doc """
+  Marks the given todo as done and generates a new recommendation.
+  """
+  def check_and_update_recommendation(todo_id) do
+    GenServer.cast(__MODULE__, {:check, todo_id})
+  end
+
+  @doc """
+  Marks the given todo as not done and generates a new recommendation.
+  """
+  def uncheck_and_update_recommendation(todo_id) do
+    GenServer.cast(__MODULE__, {:uncheck, todo_id})
+  end
+
   # Server Callbacks
 
   @impl true
@@ -33,6 +47,19 @@ defmodule ExAssignment.RecommendationServer do
     {:reply, state.recommendation, state}
   end
 
+  @impl true
+  def handle_cast({:check, todo_id}, _state) do
+    Todos.check(todo_id)
+    new_recommendation = generate_recommendation()
+    {:noreply, %{recommendation: new_recommendation}}
+  end
+
+  @impl true
+  def handle_cast({:uncheck, todo_id}, _state) do
+    Todos.uncheck(todo_id)
+    new_recommendation = generate_recommendation()
+    {:noreply, %{recommendation: new_recommendation}}
+  end
   # Helper Functions
 
   defp generate_recommendation() do
