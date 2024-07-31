@@ -33,6 +33,12 @@ defmodule ExAssignment.RecommendationServer do
     GenServer.cast(__MODULE__, {:uncheck, todo_id})
   end
 
+  @doc """
+  Deletes the todo and generates a new recommendation if the deleted todo was the current recommendation.
+  """
+  def delete_and_update_recommendation(todo) do
+    GenServer.cast(__MODULE__, {:delete, todo})
+  end
   # Server Callbacks
 
   @impl true
@@ -62,6 +68,18 @@ defmodule ExAssignment.RecommendationServer do
     Todos.uncheck(todo_id)
     new_recommendation = generate_recommendation()
     {:noreply, %{recommendation: new_recommendation}}
+  end
+
+  @impl true
+  def handle_cast({:delete, todo}, state) do
+    {:ok, _todo} = Todos.delete_todo(todo)
+
+    if state.recommendation == todo do
+      new_recommendation = generate_recommendation()
+      {:noreply, %{recommendation: new_recommendation}}
+    else
+      {:noreply, state}
+    end
   end
   # Helper Functions
 

@@ -61,7 +61,7 @@ defmodule ExAssignmentWeb.TodoController do
 
   def delete(conn, %{"id" => id}) do
     todo = Todos.get_todo!(id)
-    {:ok, _todo} = Todos.delete_todo(todo)
+    :ok= RecommendationServer.delete_and_update_recommendation(todo)
 
     conn
     |> put_flash(:info, "Todo deleted successfully.")
