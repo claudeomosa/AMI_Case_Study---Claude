@@ -45,12 +45,21 @@ defmodule ExAssignment.Todos do
   ASSIGNMENT: ...
   """
   def get_recommended() do
-    list_todos(:open)
-    |> case do
-      [] -> nil
-      todos -> Enum.take_random(todos, 1) |> List.first()
+    todos = list_todos(:open)
+
+    total_weight = Enum.sum(Enum.map(todos, fn todo -> 1 / todo.priority end))
+    random_value = :rand.uniform() * total_weight
+
+    Enum.reduce_while(todos, 0, fn todo, acc ->
+      weight = 1 / todo.priority
+      if acc + weight > random_value do
+        {:halt, todo}
+      else
+        {:cont, acc + weight}
+      end
+    end)
     end
-  end
+
 
   @doc """
   Gets a single todo.
